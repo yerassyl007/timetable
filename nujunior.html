@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NU Junior</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f6f9fc 0%, #e9ecef 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            position: relative;
+        }
+
+        .current-info {
+            text-align: center;
+            padding: 20px;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border-radius: 15px;
+            font-size: 1.3em;
+            color: #1565c0;
+            box-shadow: 0 4px 15px rgba(25, 118, 210, 0.1);
+            transition: all 0.3s ease;
+            animation: pulse 2s infinite;
+        }
+
+        .timetable {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 20px;
+            position: relative;
+        }
+
+        .timetable-section {
+            position: absolute;
+            left: 0;
+            right: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .unt-section {
+            top: 105px; /* Adjusted to start after headers */
+            height: 395px; /* Height for UNT section */
+            background: rgba(255, 0, 0, 0.05);
+            border: 2px solid rgba(255, 0, 0, 0.2);
+            border-radius: 15px;
+        }
+
+        .nu-section {
+            top: 550px; /* Positioned after UNT section */
+            height: 180px; /* Height for NU section */
+            background: rgba(0, 255, 0, 0.05);
+            border: 2px solid rgba(0, 255, 0, 0.2);
+            border-radius: 15px;
+        }
+
+        .section-label {
+            position: absolute;
+            right: -120px;
+            background: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.9em;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .unt-label {
+            top: 50%;
+            transform: translateY(-50%);
+            color: #d32f2f;
+        }
+
+        .nu-label {
+            top: 50%;
+            transform: translateY(-50%);
+            color: #2e7d32;
+        }
+
+        .timetable th {
+            background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+            color: white;
+            padding: 20px 15px;
+            text-align: center;
+            font-size: 1.1em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: sticky;
+            top: 0;
+            z-index: 2;
+        }
+
+        .timetable td {
+            padding: 15px;
+            text-align: center;
+            position: relative;
+            transition: all 0.3s ease;
+            border-radius: 10px;
+            background: white;
+            z-index: 1;
+        }
+
+        .subject {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .subject:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .lunch {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+            color: #e65100;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(245, 124, 0, 0.1);
+            z-index: 2;
+        }
+
+        .current {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            border: 3px solid #43a047;
+            animation: glow 2s infinite;
+        }
+
+        .past-day {
+            opacity: 0.5 !important;
+            filter: grayscale(70%) !important;
+        }
+
+        .tooltip {
+            position: absolute;
+            background: linear-gradient(135deg, #333333 0%, #222222 100%);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 0.9em;
+            bottom: 120%;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            display: none;
+            z-index: 1000;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .time-column {
+            background: #f5f5f5;
+            font-weight: bold;
+            color: #424242;
+            position: sticky;
+            left: 0;
+            z-index: 2;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .timetable th, .timetable td {
+                padding: 10px 8px;
+                font-size: 0.9em;
+            }
+
+            .section-label {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="current-info animate__animated animate__fadeIn" id="currentInfo">
+            Loading...
+        </div>
+        <div class="timetable-section unt-section">
+            <div class="section-label unt-label">NU Junior</div>
+        </div>
+        <div class="timetable-section nu-section">
+            <div class="section-label nu-label">NU Senior</div>
+        </div>
+        <table class="timetable">
+            <tr>
+                <th>Time</th>
+                <th>Monday</th>
+                <th>Tuesday</th>
+                <th>Wednesday</th>
+                <th>Thursday</th>
+                <th>Friday</th>
+            </tr>
+        </table>
+    </div>
+
+    <script>
+        const periods = [
+            ["9:00", "9:50", "UNT"],
+            ["9:55", "10:45", "UNT"],
+            ["10:55", "11:45", "UNT"],
+            ["12:00", "12:50", "UNT"],
+            ["12:50", "13:05", "LUNCH-1"],
+            ["13:05", "13:55", "UNT"],
+            ["13:55", "14:10", "LUNCH-2"],
+            ["14:10", "15:00", "NU"],
+            ["15:05", "15:55", "NU"],
+            ["16:05", "16:55", "NU"]
+        ];
+
+        const schedule = [
+            [
+                { subject: "IELTS", teacher: "Temirlan Zhubatyr", room: "301" },
+                { subject: "Mentor", teacher: "Azhar Torekhankyzy", room: "301" },
+                { subject: "Psychology & Mentor", teacher: "2 people", room: "301" },
+                { subject: "Digital SAT - Math", teacher: "Damir Moldabay", room: "301" },
+                { subject: "LUNCH TIME - 1"},
+                { subject: "Counsellor", teacher: "Temirlan Zhubatyr", room: "301" },
+                { subject: "LUNCH TIME - 2"},
+                { subject: "Digital SAT - Math", teacher: "Adilet Amzebek", room: "301" },
+                { subject: "Digital SAT - Verbal", teacher: "Temirlan Zhubatyr", room: "301" },
+                { subject: "NUET - CT&PS", teacher: "Damir Moldabay", room: "301" }
+            ],
+            [
+                { subject: "Digital SAT - Math", teacher: "Damir Moldabay", room: "301" },
+                { subject: "Digital SAT - Math", teacher: "Damir Moldabay", room: "301" },
+                { subject: "IELTS", teacher: "Temirlan Zhubatyr", room: "301" },
+                { subject: "IELTS", teacher: "Temirlan Zhubatyr", room: "301" },
+                { subject: "LUNCH TIME - 1"},
+                { subject: "Speaking - Miss Mella", teacher: "Adelaida Carmela", room: "301" },
+                { subject: "LUNCH TIME - 2"},
+                { subject: "NUET - Math", teacher: "Adilet Amzebek", room: "301" },
+                { subject: "Digital SAT - Verbal", teacher: "Temirlan Zhubatyr", room: "301" },
+                { subject: "NUET - CT&PS", teacher: "Damir Moldabay", room: "301" }
+            ],
+            [
+                { subject: "Digital SAT - Math", teacher: "Damir Moldabat", room: "301" },
+                { subject: "History", teacher: "Sherkhan Sabituly", room: "301" },
+                { subject: "IELTS", teacher: "Temirlan Zhubatyr", room: "301" },
+                { subject: "Mentor", teacher: "Azhar Torekhankyzy", room: "301" },
+                { subject: "LUNCH TIME - 1"},
+                { subject: "IELTS", teacher: "Temirlan Zhubatyr", room: "301" },
+                { subject: "LUNCH TIME - 2"},
+                { subject: "Digital SAT - Math", teacher: "Adilet Amzebek", room: "301" },
+                { subject: "Digital SAT - Verbal", teacher: "Temirlan Zhubatyr", room: "301" },
+                { subject: "NUET - CT&PS", teacher: "Damir Moldabay", room: "301" }
+            ],
+            [
+                { subject: "Digital SAT - Math", teacher: "Damir Moldabay", room: "301" },
+                { subject: "Mentor", teacher: "Azhar Torekhankyzy", room: "301" },
+                { subject: "Digital SAT - Math", teacher: "Damir Moldabay", room: "301" },
+                { subject: "IELTS", teacher: "Temirlan Zhubatyr", room: "301" },
+                { subject: "LUNCH TIME - 1"},
+                { subject: "History", teacher: "Sherkhan Sabituly", room: "301" },
+                { subject: "LUNCH TIME - 2"},
+                { subject: "NUET - Math", teacher: "Adilet Amzebek", room: "301" },
+                { subject: "NUET - Math", teacher: "Adilet Amzebek", room: "301" },
+                { subject: "Digital SAT - Verbal", teacher: "Temirlan Zhubatyr", room: "301" }
+            ],
+            [
+                { subject: "Speaking - Miss Mella", teacher: "Adelaida Carmela", room: "301" },
+                { subject: "Mentor", teacher: "Azhar Torekhankyzy", room: "301" },
+                { subject: "Digital SAT - Math", teacher: "Damir Moldabay", room: "301"},
+                { subject: "Digital SAT - Math", teacher: "Damir Moldabay", room: "313" },
+                { subject: "LUNCH TIME - 1"},
+                { subject: "IELTS", teacher: "Temirlan Zhubatyr", room: "313" },
+                { subject: "LUNCH TIME - 2"},
+                { subject: "Digital SAT - Verbal", teacher: "Temirlan Zhubatyr", room: "301" },
+                { subject: "NUET - CT&PS", teacher: "Damir Moldabay", room: "301" },
+                { subject: "NUET - CT&PS", teacher: "Damir Moldabay", room: "301" }
+            ]
+    ]
+
+
+        function createTimetable() {
+            const table = document.querySelector('.timetable');
+            let subjectCounter = 0; // Counter for subject numbering
+
+            periods.forEach((period, index) => {
+                const row = document.createElement('tr');
+                const timeCell = document.createElement('td');
+                timeCell.className = 'time-column';
+                timeCell.textContent = `${period[0]} - ${period[1]}`;
+                row.appendChild(timeCell);
+
+                for (let i = 0; i < 5; i++) {
+                    const cell = document.createElement('td');
+                    if (period[2] === 'LUNCH-1' || period[2] === 'LUNCH-2') {
+                        cell.className = 'lunch';
+                        cell.textContent = period[2] === 'LUNCH-1' ? 'LUNCH TIME - 1' : 'LUNCH TIME - 2';
+                    } else {
+                        cell.className = `subject ${period[2].toLowerCase()}`;
+                        cell.textContent = schedule[i][index].subject; // Each subject gets a unique name
+                        cell.setAttribute('data-teacher', schedule[i][index].teacher);
+                        cell.setAttribute('data-classroom', schedule[i][index].room);
+
+                        const tooltip = document.createElement('div');
+                        tooltip.className = 'tooltip';
+                        cell.appendChild(tooltip);
+
+                        cell.addEventListener('mouseenter', (e) => {
+                            const tooltip = e.target.querySelector('.tooltip');
+                            tooltip.textContent = `Teacher: ${e.target.dataset.teacher} | Room: ${e.target.dataset.classroom}`;
+                            tooltip.style.display = 'block';
+                        });
+
+                        cell.addEventListener('mouseleave', (e) => {
+                            const tooltip = e.target.querySelector('.tooltip');
+                            tooltip.style.display = 'none';
+                        });
+                    }
+                    row.appendChild(cell);
+                }
+                table.appendChild(row);
+            });
+        }
+
+        function updateCurrentPeriod() {
+            const now = new Date();
+            const day = now.getDay();
+            const time = now.getHours() * 60 + now.getMinutes();
+
+            // Reset all past day styling
+            document.querySelectorAll('.timetable td').forEach(cell => {
+                cell.classList.remove('past-day');
+            });
+
+            if (day >= 1 && day <= 5) {
+                // Apply past days styling
+                const cells = document.querySelectorAll('.timetable tr');
+                cells.forEach(row => {
+                    const dayCells = row.querySelectorAll('td');
+                    for (let i = 1; i < day; i++) {
+                        if (dayCells[i]) {
+                            dayCells[i].classList.add('past-day');
+                        }
+                    }
+                });
+
+                let currentPeriod = null;
+                periods.forEach((period, index) => {
+                    const [startTime, endTime] = period;
+                    const [startHour, startMin] = startTime.split(':').map(Number);
+                    const [endHour, endMin] = endTime.split(':').map(Number);
+                    const periodStart = startHour * 60 + startMin;
+                    const periodEnd = endHour * 60 + endMin;
+
+                    if (time >= periodStart && time <= periodEnd) {
+                        currentPeriod = period;
+                        const cells = document.querySelectorAll('.timetable tr');
+                        const currentCell = cells[index + 1].querySelectorAll('td')[day];
+                        if (currentCell) {
+                            currentCell.classList.add('current');
+                        }
+                    }
+                });
+
+                const infoDiv = document.getElementById('currentInfo');
+                if (currentPeriod) {
+                    if (currentPeriod[2].includes('LUNCH')) {
+                        infoDiv.textContent = "It's lunch time!";
+                    } else {
+                        infoDiv.textContent = "Current period: " + currentPeriod[0] + " - " + currentPeriod[1];
+                    }
+                } else {
+                    infoDiv.textContent = "No active period";
+                }
+            }
+        }
+
+        createTimetable();
+        updateCurrentPeriod();
+        setInterval(updateCurrentPeriod, 60000);
+    </script>
+</body>
+</html>
