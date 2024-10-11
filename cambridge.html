@@ -60,16 +60,16 @@
         }
 
         .unt-section {
-            top: 105px; /* Adjusted to start after headers */
-            height: 395px; /* Height for UNT section */
+            top: 105px;
+            height: 395px;
             background: rgba(255, 0, 0, 0.05);
             border: 2px solid rgba(255, 0, 0, 0.2);
             border-radius: 15px;
         }
 
         .nu-section {
-            top: 550px; /* Positioned after UNT section */
-            height: 180px; /* Height for NU section */
+            top: 550px;
+            height: 180px;
             background: rgba(0, 255, 0, 0.05);
             border: 2px solid rgba(0, 255, 0, 0.2);
             border-radius: 15px;
@@ -293,7 +293,7 @@
 
         function createTimetable() {
             const table = document.querySelector('.timetable');
-            let subjectCounter = 0; // Counter for subject numbering
+            let subjectCounter = 0; 
 
             periods.forEach((period, index) => {
                 const row = document.createElement('tr');
@@ -309,7 +309,7 @@
                         cell.textContent = period[2] === 'LUNCH-1' ? 'LUNCH TIME - 1' : 'LUNCH TIME - 2';
                     } else {
                         cell.className = `subject ${period[2].toLowerCase()}`;
-                        cell.textContent = schedule[i][index].subject; // Each subject gets a unique name
+                        cell.textContent = schedule[i][index].subject; 
                         cell.setAttribute('data-teacher', schedule[i][index].teacher);
                         cell.setAttribute('data-classroom', schedule[i][index].room);
 
@@ -339,13 +339,13 @@
             const day = now.getDay();
             const time = now.getHours() * 60 + now.getMinutes();
 
-            // Reset all past day styling
+            
             document.querySelectorAll('.timetable td').forEach(cell => {
                 cell.classList.remove('past-day');
             });
 
             if (day >= 1 && day <= 5) {
-                // Apply past days styling
+                
                 const cells = document.querySelectorAll('.timetable tr');
                 cells.forEach(row => {
                     const dayCells = row.querySelectorAll('td');
