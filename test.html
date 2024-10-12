@@ -13,186 +13,99 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
+        /* Base styles */
         body {
-            background: linear-gradient(135deg, #f6f9fc 0%, #e9ecef 100%);
-            min-height: 100vh;
-            padding: 40px 20px;
+          font-family: Arial, sans-serif;
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
         }
 
         .container {
-            max-width: 100%;
-            margin: 0 auto;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            padding: 10px;
-            backdrop-filter: blur(10px);
-            position: relative;
+          max-width: 100%;
+          padding: 20px;
+          overflow-x: auto;
         }
 
-        .current-info {
-            text-align: center;
-            padding: 15px;
-            margin: 10px 0;
-            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
-            border-radius: 8px;
-            font-size: 1.3em;
-            color: #1565c0;
-            box-shadow: 0 4px 15px rgba(25, 118, 210, 0.1);
-            transition: all 0.3s ease;
-            animation: pulse 2s infinite;
-            width: 100%;
-        }
-
-        .timetable {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            margin-top: 20px;
-            position: relative;
-        }
-
+        /* Timetable sections */
         .timetable-section {
-            position: absolute;
-            margin: 20px 0;
-            width: 100%;
-            pointer-events: none;
-        }
-
-        .unt-section {
-            top: 105px; /* Adjusted to start after headers */
-            height: 395px; /* Height for UNT section */
-            background: rgba(255, 0, 0, 0.05);
-            border: 2px solid rgba(255, 0, 0, 0.2);
-            border-radius: 15px;
-        }
-
-        .nu-section {
-            top: 550px; /* Positioned after UNT section */
-            height: 180px; /* Height for NU section */
-            background: rgba(0, 255, 0, 0.05);
-            border: 2px solid rgba(0, 255, 0, 0.2);
-            border-radius: 15px;
+          margin-bottom: 20px;
+          position: relative;
         }
 
         .section-label {
-            position: absolute;
-            right: -120px;
-            background: white;
-            padding: 10px 15px;
-            border-radius: 4px;
-            width: 100%;
-            margin-bottom: 10px;
-            font-size: 0.9em;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+          font-weight: bold;
+          margin-bottom: 10px;
         }
 
+        /* Table styles */
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          table-layout: fixed;
+        }
+
+        th, td {
+          border: 1px solid #ddd;
+          padding: 8px;
+          text-align: left;
+        }
+
+        th {
+          background-color: #f2f2f2;
+        }
+
+        /* Responsive styles */
+        @media screen and (max-width: 768px) {
+          .container {
+            padding: 10px;
+          }
+
+          .timetable-section {
+            margin-bottom: 30px;
+          }
+
+          .section-label {
+            position: static;
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+          }
+
+          table {
+            font-size: 0.9em;
+          }
+
+          th, td {
+            padding: 6px;
+          }
+        }
+
+        /* Color adjustments */
         .unt-label {
-            top: 50%;
-            transform: translateY(-50%);
-            color: #d32f2f;
+          color: #00853E; /* Darker green */
         }
 
         .nu-label {
-            top: 50%;
-            transform: translateY(-50%);
-            color: #2e7d32;
+          color: #8B0000; /* Darker red */
         }
 
-        .timetable th {
-            background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
-            color: white;
-            padding: 20px 15px;
-            text-align: center;
-            font-size: 1.1em;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            position: sticky;
-            top: 0;
-            z-index: 2;
+        /* Animation */
+        .animate__animated {
+          animation-duration: 1s;
         }
 
-        .timetable td {
-            padding: 15px;
-            text-align: center;
-            position: relative;
-            transition: all 0.3s ease;
-            border-radius: 10px;
-            background: white;
-            z-index: 1;
+        .animate__fadeIn {
+          animation-name: fadeIn;
         }
 
-        .subject {
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .subject:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
- }
-
-        .lunch {
-            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
-            color: #e65100;
-            font-weight: bold;
-            box-shadow: 0 4px 15px rgba(245, 124, 0, 0.1);
-            z-index: 2;
-        }
-
-        .current {
-            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
-            border: 3px solid #43a047;
-            animation: glow 2s infinite;
-        }
-
-        .past-day {
-            opacity: 0.5 !important;
-            filter: grayscale(70%) !important;
-        }
-
-        .tooltip {
-            position: absolute;
-            background: linear-gradient(135deg, #333333 0%, #222222 100%);
-            color: white;
-            padding: 12px 20px;
-            border-radius: 8px;
-            font-size: 0.9em;
-            bottom: 120%;
-            left: 50%;
-            transform: translateX(-50%);
-            white-space: nowrap;
-            display: none;
-            z-index: 1000;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .time-column {
-            background: #f5f5f5;
-            font-weight: bold;
-            color: #424242;
-            position: sticky;
-            left: 0;
-            z-index: 2;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 15px;
-            }
-
-            .timetable th, .timetable td {
-                padding: 10px 8px;
-                font-size: 0.9em;
-            }
-
-            .section-label {
-                display: none;
-            }
-
-            .timetable {
-                overflow-x: auto;
-            }
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
         }
     </style>
 </head>
